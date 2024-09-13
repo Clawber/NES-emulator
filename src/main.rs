@@ -6,6 +6,12 @@ pub struct CPU {
     pub program_counter: u16,
 }
 
+impl Default for CPU {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CPU {
     pub fn new() -> Self {
         CPU {
@@ -14,6 +20,14 @@ impl CPU {
             register_y: 0,
             status: 0,
             program_counter: 0,
+        }
+    }
+
+    pub fn set_flag(&mut self, cond: bool, bitmask: u8) {
+        if condition {
+            self.status |= bitmask
+        } else {
+            self.status &= !bitmask
         }
     }
 
@@ -30,17 +44,8 @@ impl CPU {
                     self.program_counter += 1;
                     self.register_a = param;
 
-                    if self.register_a == 0 {
-                        self.status = self.status | 0b0000_0010
-                    } else {
-                        self.status = self.status & 0b1111_1101
-                    }
-
-                    if self.register_a & 0b1000_0000 == 1 {
-                        self.status = self.status | 0b1000_0000
-                    } else {
-                        self.status = self.status & 0b0111_1111
-                    }
+                    self.set_flag(self.register_a == 0, 0b0000_0010);
+                    self.set_flag(self.register_a & 0b1000_0000 == 1, 0b1000_0000);
                 }
                 0x00 => {
                     return;
